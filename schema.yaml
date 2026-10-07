@@ -508,7 +508,7 @@ classes:
         range: AnnotationPropertyValueTypeEnum
       property_value_rank:
         range: integer
-        ifabsent: 0
+        ifabsent: int(0)
 
   #### DefinedSet ####
   DefinedSet:
@@ -1641,7 +1641,7 @@ classes:
           addedField: false
       hasEHLD:
         range: boolean
-        ifabsent: false
+        ifabsent: "false"
         annotations:
           constraint: OPTIONAL
           addedField: false
@@ -1910,7 +1910,6 @@ classes:
       - name
     slot_usage:
       instanceOf:
-        category: all
         annotations:
           addedField: false
           type:
@@ -2871,46 +2870,47 @@ classes:
   Relationship:
     attributes:
         type:
-        direction: RelationshipDirectionEnum
+        direction:
+          range: RelationshipDirectionEnum
   #### Annotations classes - end ####
 
 #### Enumerations ####
 enums:
   ReactomeConstraintEnum:
     permissible_values:
-      NOMANUALEDIT
-      MANDATORY
-      OPTIONAL
-      REQUIRED
+      NOMANUALEDIT:
+      MANDATORY:
+      OPTIONAL:
+      REQUIRED:
   RelationshipDirectionEnum:
     permissible_values:
-      INCOMING
-      OUTGOING
+      INCOMING:
+      OUTGOING:
   ReleaseStatusEnum:
     permissible_values:
-      EXISTS
-      CREATED
-      INCREMENTED
-      REPLACEMENT
-      ORTHO
+      EXISTS:
+      CREATED:
+      INCREMENTED:
+      REPLACEMENT:
+      ORTHO:
   CategoryEnum:
      permissible_values:
-       none
-       any
-       all
+       none:
+       any:
+       all:
   AnnotationThingClassEnum:
     permissible_values:
-      SchemaClass
-      SchemaClassAttribute
-      Schema
+      SchemaClass:
+      SchemaClassAttribute:
+      Schema:
   AnnotationPropertyValueTypeEnum:
     permissible_values:
-      INTEGER
-      SYMBOL
-      STRING
-      INSTANCE
-      SchemaClass
-      SchemaClassAttribute
+      INTEGER:
+      SYMBOL:
+      STRING:
+      INSTANCE:
+      SchemaClass:
+      SchemaClassAttribute:
 
 #### Slots ####
 slots:
