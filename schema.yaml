@@ -2963,6 +2963,7 @@ slots:
       constraint: MANDATORY
       type: "compartment"
   DB_ID:
+    identifier: true
     range: AnnotationLongType
     annotations:
       id: true
@@ -3033,6 +3034,7 @@ slots:
       type: "hasMember"
       sorted_set: true
   id:
+    identifier: true
     range: AnnotationLongType
     annotations:
       id: true
