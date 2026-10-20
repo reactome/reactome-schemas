@@ -173,6 +173,21 @@ REGULAR_TO_NONREGULAR_ATTR_NAME_FOR_MYSQL = {
     "rnaMarker" : "RNAMarker"
 }
 
+def get_ifabsent_value(attr_entry: dict):
+    """
+    Return the attribute's 'ifabsent' value, converting LinkML's typed forms to Python values:
+    'int(0)' -> 0 and 'true'/'false' -> True/False. Other values (e.g. 'string(...)' or Java
+    expressions) are returned unchanged.
+    """
+    value = attr_entry.get('ifabsent')
+    if isinstance(value, str):
+        int_match = re.fullmatch(r"int\((-?\d+)\)", value)
+        if int_match:
+            return int(int_match.group(1))
+        if value.lower() in ("true", "false"):
+            return value.lower() == "true"
+    return value
+
 def get_type_for_datamodel(range: str, attr_entry: dict) -> str:
     """
     Retrieve value for "type" property in the DataModel table insert statement
@@ -221,9 +236,10 @@ def get_mysql_type_for_range(range: str, enums: dict, attr_entry: dict) -> str:
         ret = RANGE_TO_MYSQL_TYPE[range]
     elif range.endswith("Enum"):
         if range in enums:
-            enum_values = enums[range]["permissible_values"]
+            # LinkML permissible_values is a mapping of value -> definition
+            enum_values = list(enums[range]["permissible_values"])
             ret = "enum({}{}{}) COLLATE utf8_unicode_ci"\
-                .format("'",enum_values.replace(" ", "','"), "'")
+                .format("'", "','".join(enum_values), "'")
     return ret
 
 def remove_curator_only_annotations(classes: dict, slots: dict) -> (dict, dict):
@@ -1024,7 +1040,7 @@ def get_value(class_entry: dict, attr: str, attr_entry: dict) -> str:
         value = None
         if 'ifabsent' in attr_entry:
             # Return 'ifabsent' value as is unless it's a boolean in which case lower-case it (boolean in Java in lower case)
-            value = attr_entry['ifabsent']
+            value = get_ifabsent_value(attr_entry)
             if type(value) == bool:
                 value = str(value).lower()
         elif 'slot_usage' in class_entry \
@@ -1324,14 +1340,15 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict,
                     ret_tables.append(get_filled_mysql_table_template_for_multivalued_attr(clazz, attr, range))
                 else:
                     # attr is single-valued
-                    if 'ifabsent' in attr_entry and attr_entry['ifabsent'] is not None:
-                        if isinstance(attr_entry['ifabsent'], bool):
+                    ifabsent = get_ifabsent_value(attr_entry)
+                    if ifabsent is not None:
+                        if isinstance(ifabsent, bool):
                             # See: https://stackoverflow.com/questions/37888620/comparing-boolean-and-int-using-isinstance
                             suffix = " DEFAULT NULL"
-                        elif isinstance(attr_entry['ifabsent'], int):
+                        elif isinstance(ifabsent, int):
                             # For now restrict it to just an int default
                             # e.g. property_value_rank in DataModel
-                            suffix = " DEFAULT '{}'".format(attr_entry['ifabsent'])
+                            suffix = " DEFAULT '{}'".format(ifabsent)
                     else:
                         # Get suffix: (NOT NULL or DEFAULT NULL)
                         if attr in ['_timestamp', 'dateTime']:
@@ -1551,7 +1568,7 @@ def get_schemaclassattribute_rows_for_datamodel(clazz: str, attr: str, classes: 
                                                             'STRING', 0, ret, single_attributes_in_datamodel)
     if 'ifabsent' in attr_entry:
         property_value_type_for_default = get_property_value_type_from_type(type)
-        default = attr_entry['ifabsent']
+        default = get_ifabsent_value(attr_entry)
         ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'default',
                                                                 str(default).upper(),
                                                                 property_value_type_for_default,

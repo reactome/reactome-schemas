@@ -153,14 +153,14 @@ classes:
           transient: true
       isLoaded:
         range: boolean
-        ifabsent: false
+        ifabsent: "false"
         annotations:
           reactome_transient: true
           transient: true
           public: true
       preventLazyLoading:
         range: boolean
-        ifabsent: false
+        ifabsent: "false"
         annotations:
           reactome_transient: true
           transient: true
@@ -206,7 +206,7 @@ classes:
       deletedInstanceDbId:
         range: integer
         multivalued: true
-        deprecated: true
+        deprecated: "true"
         annotations:
           originName: deletedInstanceDB_ID
       deletedInstance:
@@ -559,8 +559,8 @@ classes:
   #### ModifiedNucleotide ####
   ModifiedNucleotide:
     slot_usage:
-      modification:
-          allowed:
+      # Empty on purpose: replaces the curator schema's slot_usage (and so its 'allowed' classes) in the web schema
+      modification: {}
 
   #### ModifiedResidue ####
   ModifiedResidue:
