@@ -9,8 +9,17 @@ default_range: string
 imports:
   - linkml:types
 
-# types:
-# TBC
+types:
+  AnnotationLongType:
+    typeof: integer
+  AnnotationTextType:
+    typeof: string
+  AnnotationDateType:
+    typeof: date
+  AnnotationBytesType:
+    typeof: string
+  AnnotationLongBlobType:
+    typeof: string
 
 classes:
 
@@ -2747,11 +2756,6 @@ classes:
           addedField: false
 
   #### Annotations classes - start ####
-  AnnotationBytesType:
-  AnnotationLongType:
-  AnnotationTextType:
-  AnnotationDateType:
-  AnnotationLongBlobType:
   Annotations:
     attributes:
       abstract:
